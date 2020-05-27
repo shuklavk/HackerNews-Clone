@@ -1,5 +1,9 @@
 const { GraphQLServer } = require('graphql-yoga');
 const { prisma } = require('./generated/prisma-client');
+const Query = require('./resolvers/Query');
+const Mutation = require('./resolvers/Mutation');
+const User = require('./resolvers/User');
+const Link = require('./resolvers/Link');
 
 // Definition of GraphQL Schema
 // Defining a query, that takes in one parameter of "info" which has the type String
@@ -24,54 +28,57 @@ const { prisma } = require('./generated/prisma-client');
 // Resolvers = an actual implementation of the schema defined above
 // Structure is similar to the query, as in it takes a parameter called info, which is a string
 const resolvers = {
-  Query: {
-    info: () => `Vikas Shukla`,
-    feed: (parent, args, context) => {
-      return context.prisma.links();
-    }
-    // link: (parent, { id }) => {
-    //   for (let i = 0; i < links.length; i++) {
-    //     if (links[i].id === id) {
-    //       return links[i];
-    //     }
-    //   }
-    //   return { id: 'none', description: 'none', url: 'none' };
-    // }
-  },
-  Mutation: {
-    post: (parent, { url, description }, context) => {
-      return context.prisma.createLink({
-        url,
-        description
-      });
-    }
-    // updateLink: (parent, { id, url, description }) => {
-    //   for (let i = 0; i < links.length; i++) {
-    //     if (links[i].id === id) {
-    //       if (url) {
-    //         links[i].url = url;
-    //       }
-    //       if (description) {
-    //         links[i].description = description;
-    //       }
-    //       return links[i];
-    //     }
-    //   }
-    // },
-    // deleteLink: (parent, { id }) => {
-    //   let deleteIndex = -1;
-    //   for (let i = 0; i < links.length; i++) {
-    //     if (links[i].id === id) {
-    //       deleteIndex = i;
-    //       break;
-    //     }
-    //   }
-    //   if (deleteIndex >= 0) {
-    //     links.splice(deleteIndex, 1);
-    //   }
-    //   // return links;
-    // }
-  }
+  Query,
+  Mutation,
+  Link,
+  User
+  // info: () => `Vikas Shukla`,
+  // feed: (parent, args, context) => {
+  //   return context.prisma.links();
+  // }
+  // link: (parent, { id }) => {
+  //   for (let i = 0; i < links.length; i++) {
+  //     if (links[i].id === id) {
+  //       return links[i];
+  //     }
+  //   }
+  //   return { id: 'none', description: 'none', url: 'none' };
+  // }
+  // },
+  // Mutation: {
+  //   post: (parent, { url, description }, context) => {
+  //     return context.prisma.createLink({
+  //       url,
+  //       description
+  //     });
+  //   }
+  // updateLink: (parent, { id, url, description }) => {
+  //   for (let i = 0; i < links.length; i++) {
+  //     if (links[i].id === id) {
+  //       if (url) {
+  //         links[i].url = url;
+  //       }
+  //       if (description) {
+  //         links[i].description = description;
+  //       }
+  //       return links[i];
+  //     }
+  //   }
+  // },
+  // deleteLink: (parent, { id }) => {
+  //   let deleteIndex = -1;
+  //   for (let i = 0; i < links.length; i++) {
+  //     if (links[i].id === id) {
+  //       deleteIndex = i;
+  //       break;
+  //     }
+  //   }
+  //   if (deleteIndex >= 0) {
+  //     links.splice(deleteIndex, 1);
+  //   }
+  //   // return links;
+  // }
+  // }
 
   // Not necessary graphql implies these resolvers automatically
   // Link: {
@@ -86,7 +93,9 @@ const resolvers = {
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
   resolvers,
-  context: { prisma }
+  context: request => {
+    return { ...request, prisma };
+  }
 });
 
 server.start(() => {

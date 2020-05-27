@@ -11,7 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^4.0.1",
     "graphql-yoga": "^1.18.3",
+    "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.4"
   }
 }
